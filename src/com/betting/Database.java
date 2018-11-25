@@ -1,5 +1,11 @@
 package com.betting;
 
+import com.betting.database.BetWrapper;
+import com.betting.database.GameWrapper;
+import com.betting.database.TeamWrapper;
+import com.betting.database.Wrapper;
+import com.betting.entity.*;
+
 import java.util.ArrayList;
 
 public class Database {
@@ -10,24 +16,6 @@ public class Database {
 
     private Database(){
         teams = new ArrayList<>();
-        teams.add(new Team("Borussia Dortmund"));
-        teams.add(new Team("RB Leipzig"));
-        teams.add(new Team("Bor. Moenchengladbach"));
-        teams.add(new Team("Werder Bremen"));
-        teams.add(new Team("Hertha BSC"));
-        teams.add(new Team("Bayern Muenchen"));
-        teams.add(new Team("Eintracht Frankfurt"));
-        teams.add(new Team("1.FSV Mainz 05"));
-        teams.add(new Team("VfL Wolfsburg"));
-        teams.add(new Team("FC Augsburg"));
-        teams.add(new Team("SC Freiburg"));
-        teams.add(new Team("1.FC Nürnberg"));
-        teams.add(new Team("TSG Hoffenheim"));
-        teams.add(new Team("Bayer 04 Leverkusen"));
-        teams.add(new Team("Schalke 04"));
-        teams.add(new Team("Hannover 96"));
-        teams.add(new Team("Fortuna Duesseldorf"));
-        teams.add(new Team("VfB Stuttgart"));
         gamedays = new ArrayList<>();
         bets = new ArrayList<>();
     }
@@ -79,7 +67,7 @@ public class Database {
                         lose++;
                     }
                     einsatz.setCent(einsatz.getCent() + b.getMoney().getCent());
-                    winnings.setCent(winnings.getCent() + -b.getMoney().getCent() + b.getWin().getCent());
+                    winnings.setCent(winnings.getCent() - b.getMoney().getCent() + b.getWin().getCent());
                 }
             }
         }
@@ -89,9 +77,8 @@ public class Database {
         }
         int moneyrate = 0;
         if(einsatz.getCent() > 0){
-            moneyrate = (int)((winnings.getEuro()/ einsatz.getEuro())*100);
+            moneyrate = (int) ((winnings.getEuro()/einsatz.getEuro())*100);
         }
-
         return "Winrate - bei Wetten zwischen " + low + " und " + high + " - "
                 + win + " : " + lose + " - " + winrate + "%"
                 + " - Winnings: " + winnings + " bei Einsatz von " + einsatz + " (" + moneyrate + "%)"
@@ -101,44 +88,44 @@ public class Database {
 
 
     public void betMatchups(){
-        bets.add(new Bet(gamedays.get(0).getGames()[1], true, -1.0, 1.91, 1.5));
-        bets.add(new Bet(gamedays.get(0).getGames()[5], false, -0.5, 1.89, 1.5));
-        bets.add(new Bet(gamedays.get(0).getGames()[6], false, +0.5, 1.88, 1.5));
+        bets.add(new Bet(gamedays.get(0).getGames().get(1), true, -1.0, 1.91, 1.5));
+        bets.add(new Bet(gamedays.get(0).getGames().get(5), false, -0.5, 1.89, 1.5));
+        bets.add(new Bet(gamedays.get(0).getGames().get(6), false, +0.5, 1.88, 1.5));
     }
 
     public void finishMatchups(){
-        gamedays.get(0).getGames()[0].finishGame(7,1, 3.41, 0.62);
-        gamedays.get(0).getGames()[1].finishGame(2,2, 1.95, 1.07);
-        gamedays.get(0).getGames()[2].finishGame(0,4, 1.10, 0.94);
-        gamedays.get(0).getGames()[3].finishGame(0,0, 0.31, 1.12);
-        gamedays.get(0).getGames()[4].finishGame(1,3, 0.78, 2.76);
-        gamedays.get(0).getGames()[5].finishGame(1,3, 1.08, 2.81);
-        gamedays.get(0).getGames()[6].finishGame(0,2, 1.23, 0.72);
-        gamedays.get(0).getGames()[7].finishGame(1,1, 1.00, 0.43);
-        gamedays.get(0).getGames()[8].finishGame(4,0, 2.89, 0.71);
+        gamedays.get(0).getGames().get(0).finishGame(7,1, 3.41, 0.62);
+        gamedays.get(0).getGames().get(1).finishGame(2,2, 1.95, 1.07);
+        gamedays.get(0).getGames().get(2).finishGame(0,4, 1.10, 0.94);
+        gamedays.get(0).getGames().get(3).finishGame(0,0, 0.31, 1.12);
+        gamedays.get(0).getGames().get(4).finishGame(1,3, 0.78, 2.76);
+        gamedays.get(0).getGames().get(5).finishGame(1,3, 1.08, 2.81);
+        gamedays.get(0).getGames().get(6).finishGame(0,2, 1.23, 0.72);
+        gamedays.get(0).getGames().get(7).finishGame(1,1, 1.00, 0.43);
+        gamedays.get(0).getGames().get(8).finishGame(4,0, 2.89, 0.71);
 
     }
 
     public void betMatchups2(){
-        bets.add(new Bet(gamedays.get(1).getGames()[0], false, -0.5, 2.040, 1.0));
-        bets.add(new Bet(gamedays.get(1).getGames()[2], false, +0.0, 2.020, 1.0));
-        bets.add(new Bet(gamedays.get(1).getGames()[4], false, -0.25, 2.070, 1.0));
-        bets.add(new Bet(gamedays.get(1).getGames()[5], true, -1.0, 1.900, 1.0));
-        bets.add(new Bet(gamedays.get(1).getGames()[6], false, -0.25, 1.870, 1.0));
-        bets.add(new Bet(gamedays.get(1).getGames()[7], true, -0.5, 1.840, 1.0));
-        bets.add(new Bet(gamedays.get(1).getGames()[8], true, -0.25, 2.010, 1.0));
+        bets.add(new Bet(gamedays.get(1).getGames().get(0), false, -0.5, 2.040, 1.0));
+        bets.add(new Bet(gamedays.get(1).getGames().get(2), false, +0.0, 2.020, 1.0));
+        bets.add(new Bet(gamedays.get(1).getGames().get(4), false, -0.25, 2.070, 1.0));
+        bets.add(new Bet(gamedays.get(1).getGames().get(5), true, -1.0, 1.900, 1.0));
+        bets.add(new Bet(gamedays.get(1).getGames().get(6), false, -0.25, 1.870, 1.0));
+        bets.add(new Bet(gamedays.get(1).getGames().get(7), true, -0.5, 1.840, 1.0));
+        bets.add(new Bet(gamedays.get(1).getGames().get(8), true, -0.25, 2.010, 1.0));
     }
 
     public void finishMatchups2(){
-        gamedays.get(1).getGames()[0].finishGame(3, 1, 1.32, 1.17);
-        gamedays.get(1).getGames()[1].finishGame(2, 2, 3.51, 1.98);
-        gamedays.get(1).getGames()[2].finishGame(1, 2, 0.62, 1.41);
-        gamedays.get(1).getGames()[3].finishGame(1, 2, 0.59, 2.06);
-        gamedays.get(1).getGames()[4].finishGame(0, 3, 0.30, 1.74);
-        gamedays.get(1).getGames()[5].finishGame(4, 0, 2.86, 0.53);
-        gamedays.get(1).getGames()[6].finishGame(1, 1, 1.14, 1.00);
-        gamedays.get(1).getGames()[7].finishGame(0, 0, 0.74, 0.75);
-        gamedays.get(1).getGames()[8].finishGame(2, 6, 1.51, 3.11);
+        gamedays.get(1).getGames().get(0).finishGame(3, 1, 1.32, 1.17);
+        gamedays.get(1).getGames().get(1).finishGame(2, 2, 3.51, 1.98);
+        gamedays.get(1).getGames().get(2).finishGame(1, 2, 0.62, 1.41);
+        gamedays.get(1).getGames().get(3).finishGame(1, 2, 0.59, 2.06);
+        gamedays.get(1).getGames().get(4).finishGame(0, 3, 0.30, 1.74);
+        gamedays.get(1).getGames().get(5).finishGame(4, 0, 2.86, 0.53);
+        gamedays.get(1).getGames().get(6).finishGame(1, 1, 1.14, 1.00);
+        gamedays.get(1).getGames().get(7).finishGame(0, 0, 0.74, 0.75);
+        gamedays.get(1).getGames().get(8).finishGame(2, 6, 1.51, 3.11);
 
     }
 
@@ -155,15 +142,15 @@ public class Database {
     }
 
     public void finishMatchups3(){
-        gamedays.get(2).getGames()[0].finishGame(0, 3, 1.39, 2.97);
-        gamedays.get(2).getGames()[1].finishGame(1, 1, 1.85, 0.58);
-        gamedays.get(2).getGames()[2].finishGame(3, 1, 2.89, 1.18);
-        gamedays.get(2).getGames()[3].finishGame(1, 4, 1.89, 1.93);
-        gamedays.get(2).getGames()[4].finishGame(2, 2, 2.61, 1.38);
-        gamedays.get(2).getGames()[5].finishGame(0, 1, 0.44, 1.50);
-        gamedays.get(2).getGames()[6].finishGame(0, 3, 1.45, 3.73);
-        gamedays.get(2).getGames()[7].finishGame(3, 0, 3.29, 0.72);
-        gamedays.get(2).getGames()[8].finishGame(2, 1, 1.55, 1.25);
+        gamedays.get(2).getGames().get(0).finishGame(0, 3, 1.39, 2.97);
+        gamedays.get(2).getGames().get(1).finishGame(1, 1, 1.85, 0.58);
+        gamedays.get(2).getGames().get(2).finishGame(3, 1, 2.89, 1.18);
+        gamedays.get(2).getGames().get(3).finishGame(1, 4, 1.89, 1.93);
+        gamedays.get(2).getGames().get(4).finishGame(2, 2, 2.61, 1.38);
+        gamedays.get(2).getGames().get(5).finishGame(0, 1, 0.44, 1.50);
+        gamedays.get(2).getGames().get(6).finishGame(0, 3, 1.45, 3.73);
+        gamedays.get(2).getGames().get(7).finishGame(3, 0, 3.29, 0.72);
+        gamedays.get(2).getGames().get(8).finishGame(2, 1, 1.55, 1.25);
     }
 
     public void betMatchups4(){
@@ -177,20 +164,62 @@ public class Database {
     }
 
     public void finishMatchups4(){
-        gamedays.get(3).getGames()[0].finishGame(2, 1, 2.00, 2.82);
-        gamedays.get(3).getGames()[1].finishGame(2, 1, 1.82, 1.18);
-        gamedays.get(3).getGames()[2].finishGame(1, 3, 1.47, 2.89);
-        gamedays.get(3).getGames()[3].finishGame(1, 3, 1.83, 0.72);
-        gamedays.get(3).getGames()[4].finishGame(4, 1, 2.60, 0.80);
-        gamedays.get(3).getGames()[5].finishGame(0, 2, 0.48, 1.61);
-        gamedays.get(3).getGames()[6].finishGame(3, 2, 2.56, 1.86);
-        gamedays.get(3).getGames()[7].finishGame(3, 0, 2.56, 0.25);
-        gamedays.get(3).getGames()[8].finishGame(3, 0, 2.62, 0.82);
+        gamedays.get(3).getGames().get(0).finishGame(2, 1, 2.00, 2.82);
+        gamedays.get(3).getGames().get(1).finishGame(2, 1, 1.82, 1.18);
+        gamedays.get(3).getGames().get(2).finishGame(1, 3, 1.47, 2.89);
+        gamedays.get(3).getGames().get(3).finishGame(1, 3, 1.83, 0.72);
+        gamedays.get(3).getGames().get(4).finishGame(4, 1, 2.60, 0.80);
+        gamedays.get(3).getGames().get(5).finishGame(0, 2, 0.48, 1.61);
+        gamedays.get(3).getGames().get(6).finishGame(3, 2, 2.56, 1.86);
+        gamedays.get(3).getGames().get(7).finishGame(3, 0, 2.56, 0.25);
+        gamedays.get(3).getGames().get(8).finishGame(3, 0, 2.62, 0.82);
+    }
+
+    public void betMatchups5(){
+        /*bets.add(new Bet(Name.TSG, -1.0, 3.100, 1.50,12));
+        bets.add(new Bet(Name.SGE, +0.0, 2.000, 1.50,12));
+        bets.add(new Bet(Name.RBL, -0.25, 1.860, 1.50,12));
+        bets.add(new Bet(Name.SCF, 0.0, 2.080, 1.50,12));*/
+        bets.add(new Bet(Name.BMG, -1.5, 2.025, 1.50, 12));
+
+
+    }
+
+    public void finishMatchups5(){
+        gamedays.get(4).getGames().get(0).finishGame(2, 0, 2.60, 0.50);
+        gamedays.get(4).getGames().get(1).finishGame(3, 3, 2.75, 1.39);
+        gamedays.get(4).getGames().get(2).finishGame(3, 3, 2.43, 1.63);
+        gamedays.get(4).getGames().get(3).finishGame(1, 3, 1.94, 3.01);
+        gamedays.get(4).getGames().get(4).finishGame(1, 2, 1.08, 1.15);
+        gamedays.get(4).getGames().get(5).finishGame(1, 0, 1.59, 0.75);
+        gamedays.get(4).getGames().get(6).finishGame(5, 2, 2.76, 2.31);
+        /*gamedays.get(4).getGames().get(7).finishGame(3, 0, 2.56, 0.25);
+        gamedays.get(4).getGames().get(8).finishGame(3, 0, 2.62, 0.82);*/
     }
 
 
 
+
     public void createGamedays(){
+        /*teams.add(new Team("Borussia Dortmund"));
+        teams.add(new Team("RB Leipzig"));
+        teams.add(new Team("Bor. Moenchengladbach"));
+        teams.add(new Team("Werder Bremen"));
+        teams.add(new Team("Hertha BSC"));
+        teams.add(new Team("Bayern Muenchen"));
+        teams.add(new Team("Eintracht Frankfurt"));
+        teams.add(new Team("1.FSV Mainz 05"));
+        teams.add(new Team("VfL Wolfsburg"));
+        teams.add(new Team("FC Augsburg"));
+        teams.add(new Team("SC Freiburg"));
+        teams.add(new Team("1.FC Nuernberg"));
+        teams.add(new Team("TSG Hoffenheim"));
+        teams.add(new Team("Bayer 04 Leverkusen"));
+        teams.add(new Team("Schalke 04"));
+        teams.add(new Team("Hannover 96"));
+        teams.add(new Team("Fortuna Duesseldorf"));
+        teams.add(new Team("VfB Stuttgart"));
+
         gamedays.add(new Gameday(8,
                 Name.SGE, Name.DUE, -0.75,
                 Name.B04, Name.H96, -1.0,
@@ -230,7 +259,54 @@ public class Database {
                 Name.FCN, Name.VFB, +0.0,
                 Name.BVB, Name.FCB, +0.25,
                 Name.RBL, Name.B04, -0.5,
-                Name.SGE, Name.S04, -0.25));
+                Name.SGE, Name.S04, -0.25));*/
+        gamedays.add(new Gameday(12,
+                Name.B04, Name.VFB, -1.0,
+                Name.FCB, Name.DUE, -3.0,
+                Name.BSC, Name.TSG, +0.25,
+                Name.FCA, Name.SGE, 0.0,
+                Name.M05, Name.BVB, +0.75,
+                Name.WOB, Name.RBL, +0.25,
+                Name.S04, Name.FCN, -1.0,
+                Name.SCF, Name.BRE, 0.0,
+                Name.BMG, Name.H96, -1.25));
+    }
+
+    public void updateData(){
+
+    }
+
+    public void loadWrapperObjects(){
+        for(TeamWrapper teamWrapper : Wrapper.getInstance().getTeams()){
+            teams.add(new Team(teamWrapper));
+        }
+        for(GameWrapper gameWrapper : Wrapper.getInstance().getGames()){
+            new Game(gameWrapper);
+        }
+        for(BetWrapper betWrapper : Wrapper.getInstance().getBets()){
+            bets.add(new Bet(betWrapper));
+        }
+    }
+
+    public Team getTeamObject(TeamWrapper teamWrapper){
+        for(Team team : Database.getInstance().getTeams()){
+            if(team.getTeamId() == teamWrapper.getTeamId()){
+                return team;
+            }
+        }
+        return null;
+    }
+
+    public Game getGameObject(GameWrapper gameWrapper){
+        for(Gameday gameday : Database.getInstance().getGamedays()){
+            for(Game game : gameday.getGames()){
+                if(game.getGameId() == gameWrapper.getGameId()){
+                    return game;
+                }
+            }
+
+        }
+        return null;
     }
 
     /*public void createMatchups3(){

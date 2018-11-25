@@ -1,6 +1,16 @@
 package com.betting;
 
 
+import com.betting.database.HibernateUtil;
+import com.betting.database.Wrapper;
+import com.betting.entity.Game;
+import com.betting.entity.Gameday;
+import com.betting.entity.Team;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
+
 public class Main {
 
     public static String waitForInput(){
@@ -13,7 +23,7 @@ public class Main {
 
     public static void menu(){
         System.out.println("Menü: \n" +
-                "[1] NextGameDay - [2] GameInfo - [3] TeamInfoMenu - [4] BettingInfo - [exit] Exit");
+                "[1] NextGameDay - [2] GameInfo - [3] TeamInfoMenu - [4] BettingInfo - [5] UpdateData - [exit] Exit");
         String input = waitForInput();
         if(input.equals("1")){
             gameDayInfoMenu(Database.getInstance().getGamedays().size()-1+8);
@@ -26,6 +36,9 @@ public class Main {
         }
         else if(input.equals("4")){
             bettingInfo();
+        }
+        else if(input.equals("5")){
+            Database.getInstance().updateData();
         }
         else {
             System.out.println("Falsche Eingabe");
@@ -44,7 +57,7 @@ public class Main {
             menu();
         }
         int inputInt = Integer.parseInt(input);
-        System.out.println(Database.getInstance().getTeams().get(inputInt).getTeamInfo());
+        System.out.println(Database.getInstance().getTeams().get(inputInt).printTeamInfo());
         teamInfoMenu();
     }
 
@@ -77,7 +90,7 @@ public class Main {
         }
 
         int inputInt = Integer.parseInt(input);
-        System.out.println(Database.getInstance().getGamedays().get(day-8).getGames()[inputInt].getGameInfo());
+        System.out.println(Database.getInstance().getGamedays().get(day-8).getGames().get(inputInt).printGameInfo());
         gameDayInfoMenu(day);
     }
 
@@ -91,8 +104,8 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Database.getInstance();
-        Database.getInstance().createGamedays();
+        //Database.getInstance();
+        /*Database.getInstance().createGamedays();
         Database.getInstance().betMatchups();
         Database.getInstance().finishMatchups();
         Database.getInstance().betMatchups2();
@@ -100,14 +113,32 @@ public class Main {
         Database.getInstance().betMatchups3();
         Database.getInstance().finishMatchups3();
         Database.getInstance().betMatchups4();
-        Database.getInstance().finishMatchups4();
+        Database.getInstance().finishMatchups4();*/
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        Query teamQuery = session.createQuery("from TeamWrapper ");
+        Wrapper.getInstance().setTeams(teamQuery.list());
+        Query gameQuery = session.createQuery("from GameWrapper ");
+        Wrapper.getInstance().setGames(gameQuery.list());
+        Query betQuery = session.createQuery("from BetWrapper ");
+        Wrapper.getInstance().setBets(betQuery.list());
+        System.out.println("Erfolg");
+        session.getTransaction().commit();
 
+        Database.getInstance().loadWrapperObjects();
+        //Database.getInstance().createGamedays();
+        //Database.getInstance().betMatchups5();
+        //Database.getInstance().finishMatchups5();
 
         menu();
 
+        HibernateUtil.getSessionFactory().close();
+
+
+
         //System.out.println(teams[0]);
-        //System.out.println(Database.getInstance().getGames().get(6).getGameInfo());
-        //System.out.println(Database.getInstance().getTeams().get(3).getTeamInfo());
+        //System.out.println(Database.getInstance().getGames().get(6).printGameInfo());
+        //System.out.println(Database.getInstance().getTeams().get(3).printTeamInfo());
 
 
 
