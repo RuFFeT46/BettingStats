@@ -86,4 +86,37 @@ public class Gameday {
     public void setGames(List<Game> games) {
         this.games = games;
     }
+
+    public String printGamedayInfo(){
+        int win = 0;
+        int lose = 0;
+        Money winnings = new Money(0);
+        Money einsatz = new Money(0);
+
+        for(Game game: games){
+            if(game.isFinished()){
+                for (Bet bet : game.getBets()){
+                    if(bet.getWin().getCent() > bet.getMoney().getCent()){
+                        win++;
+                    }
+                    else {
+                        lose++;
+                    }
+                    einsatz.setCent(einsatz.getCent() + bet.getMoney().getCent());
+                    winnings.setCent(winnings.getCent() - bet.getMoney().getCent() + bet.getWin().getCent());
+                }
+            }
+        }
+        int winrate = 0;
+        if(win+lose != 0) {
+            winrate = (int) (((double) win / (win + lose)) * 100);
+        }
+        int moneyrate = 0;
+        if(einsatz.getCent() > 0){
+            moneyrate = (int) ((winnings.getEuro()/einsatz.getEuro())*100);
+        }
+        return "Gameday: " + this.getId() + " - " + win + " : " + lose + " - " + winrate + "%"
+                + " - Winnings: " + winnings + " bei Einsatz von " + einsatz + " (" + moneyrate + "%)"
+                ;
+    }
 }

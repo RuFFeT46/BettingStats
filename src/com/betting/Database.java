@@ -193,8 +193,8 @@ public class Database {
         gamedays.get(4).getGames().get(4).finishGame(1, 2, 1.08, 1.15);
         gamedays.get(4).getGames().get(5).finishGame(1, 0, 1.59, 0.75);
         gamedays.get(4).getGames().get(6).finishGame(5, 2, 2.76, 2.31);
-        /*gamedays.get(4).getGames().get(7).finishGame(3, 0, 2.56, 0.25);
-        gamedays.get(4).getGames().get(8).finishGame(3, 0, 2.62, 0.82);*/
+        gamedays.get(4).getGames().get(7).finishGame(1, 1, 2.94, 2.31);
+        gamedays.get(4).getGames().get(8).finishGame(4, 1, 1.93, 0.47);
     }
 
 
@@ -273,7 +273,8 @@ public class Database {
     }
 
     public void updateData(){
-
+        finishMatchups5();
+        Main.menu();
     }
 
     public void loadWrapperObjects(){

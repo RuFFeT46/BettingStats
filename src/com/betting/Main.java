@@ -3,19 +3,21 @@ package com.betting;
 
 import com.betting.database.HibernateUtil;
 import com.betting.database.Wrapper;
-import com.betting.entity.Game;
-import com.betting.entity.Gameday;
-import com.betting.entity.Team;
+import com.betting.entity.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
     public static String waitForInput(){
         String input = new java.util.Scanner(System.in).nextLine();
         if(input.equals("exit")){
+            //HibernateUtil.getSessionFactory().close();
             System.exit(0);
         }
         return input;
@@ -80,6 +82,7 @@ public class Main {
     public static void gameDayInfoMenu(int day){
         int i = 0;
         System.out.println("Spieltag " + day);
+        System.out.println(Database.getInstance().getGamedays().get(day-8).printGamedayInfo());
         for(Game g : Database.getInstance().getGamedays().get(day-8).getGames()){
             System.out.println("[" + i + "] - " + g.getHomeTeam().getName() + " vs. " + g.getAwayTeam().getName());
             i++;
@@ -100,6 +103,9 @@ public class Main {
         System.out.println(Database.getInstance().getBettingInfo(1.7, 1.95));
         System.out.println(Database.getInstance().getBettingInfo(1.95, 2.3));
         System.out.println(Database.getInstance().getBettingInfo(2.3, 5.0) + "\n");
+        for (Gameday gameday : Database.getInstance().getGamedays()){
+            System.out.println(gameday.printGamedayInfo());
+        }
         menu();
     }
 
@@ -129,6 +135,12 @@ public class Main {
         //Database.getInstance().createGamedays();
         //Database.getInstance().betMatchups5();
         //Database.getInstance().finishMatchups5();
+
+        /*List<Bet> kombiBet = new ArrayList<>();
+        kombiBet.add(new Bet(Name.BMG, -1.5, 2.025, 1.50, 12));
+        kombiBet.add(new Bet(Name.SCF, 0.0, 2.080, 1.50,12));
+
+        KombiBet kombi = new KombiBet(kombiBet, 1.0);*/
 
         menu();
 
